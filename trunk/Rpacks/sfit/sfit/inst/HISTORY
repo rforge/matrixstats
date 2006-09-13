@@ -1,0 +1,16 @@
+Package: cfit
+=============
+
+Version: 0.1.2 [2006-07-2x]
+o Updated the help pages.
+
+Version: 0.1.1 [2006-05-20]
+o First version of the package where the cfit binary is automatically 
+  build upon R CMD INSTALL.  It is still no shared library that is
+  build, i.e. the approach to dump data to file, call 'cfit', and then
+  let R parse the cfit result is still used.  But at least it should
+  not (in theory) install and run on all platforms.
+
+Version: 0.1.0 [2006-05-07]
+o Created.  Had a similar version in 2003.
+
