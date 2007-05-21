@@ -4,10 +4,6 @@
 
 
 .First.lib <- function(libname, pkgname) {
-  # Add this package's cdf/ directory to the CDF path
-  cfitPath <- system.file("bin", package=pkgname);
-  options("cfit"=file.path(cfitPath, "cfit"));
-
   pkg <- Package(pkgname);
   assign(pkgname, pkg, pos=getPosition(pkg));
 
@@ -22,6 +18,20 @@
     stop("Could not locate 'bin/", binfile, "' in package '", getName(pkg), "' (v", getVersion(pkg), "). It seems like the installation of the package failed.  Please report this to ", getMaintainer(pkg), ".");
   }
 
+  # cfit system command
+  cfitPath <- system.file("bin", package=pkgname);
+  pathname <- file.path(cfitPath, "cfit");
+
+  # Set the default 'cfit' command (within quotation marks)
+  cmd <- sprintf("\"%s\"", pathname);
+  options("cfit"=cmd);
+
   cat(getName(pkg), " v", getVersion(pkg), " (", getDate(pkg), ")",
       " successfully loaded. See ?", pkgname, " for help.\n", sep="");
 }
+
+###########################################################################
+# HISTORY:
+# 2007-05-20
+# o WORKAROUND: Put quotation marks around default 'cfit' command.
+###########################################################################

@@ -160,11 +160,13 @@ setMethodS3("cfit", "matrix", function(y, k=ncol(y)+1, dump=1, chopless=NULL, ch
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Estimate model
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  path <- dirname(cfit);
-  opwd <- getwd();
-  on.exit(setwd(opwd), add=TRUE);
-  setwd(path);
-  cfit <- basename(cfit);
+  if (FALSE) {
+    path <- dirname(cfit);
+    opwd <- getwd();
+    on.exit(setwd(opwd), add=TRUE);
+    setwd(path);
+    cfit <- basename(cfit);
+  }
   cmd <- paste(cfit, args, infile);
   if (verbose)
     cat(cmd, "\n");
@@ -217,6 +219,14 @@ setMethodS3("cfit", "matrix", function(y, k=ncol(y)+1, dump=1, chopless=NULL, ch
 
 ###########################################################################
 # HISTORY:
+# 2007-05-20
+# o WORKAROUND: Now the 'cfit' executable is called by its absolute 
+#   pathname. To avoid problems with spaces in the pathname, the command
+#   should be put within qoutation marks (as in zzz.R). Some Unix setups
+#   would not recognize the command 'cfit' even if it was in the current
+#   directory, but only './cfit'.  However, Windows requires '.\\cfit'
+#   in such cases.  The only cross-platform solution is to use the
+#   absolute pathname.
 # 2006-07-21
 # o Forgot the usage in Rdoc comments.
 # 2006-05-20
