@@ -18,10 +18,13 @@
 #   \item{k}{The number of vertices of the fitted simplex. By default, the
 #     number of vertices is equal to the number of dimension (N) + 1.}
 #   \item{dump}{The output format.}
+#   \item{chopless, chopmore}{Lower and upper percentile thresholds at
+#     which extreme data points are assigned zero weights.}
 #   \item{maxiter}{"maximum number of REX steps". Default value is 60.}
 #   \item{...}{Named argument passed to the external 'cfit' program.}
 #   \item{retX}{If @TRUE, an estimate of \code{X} is returned, 
 #     otherwise not.}
+#   \item{cfit}{Shell command to call the 'cfit' executable.}
 #   \item{verbose}{}
 # }
 #

@@ -13,9 +13,9 @@ test: cfit dye2.dat
 	cfit 5 dye2.dat -a .01 -d 1 --outM stdout -q 10 -Q 90
 
 clean:
-	rm ../inst/bin/cfit
-	rm dummy.so
-	rm *.o
+	rm -f ../inst/bin/cfit
+	rm -f dummy.so
+	rm -f *.o
 
 ######################################################################
 # HISTORY:

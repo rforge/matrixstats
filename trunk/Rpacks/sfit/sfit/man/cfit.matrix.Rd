@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  cfit.R
+%  cfit.matrix.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,16 +20,21 @@
   triangle.
 }
 
+\usage{\method{cfit}{matrix}(y, k=ncol(y) + 1, dump=1, chopless=NULL, chopmore=NULL, maxiter=NULL, ..., retX=FALSE, cfit=getOption("cfit"), verbose=FALSE)}
+
 \arguments{
   \item{y}{Matrix or data frame of size IxN containing I rows of
     vectors in \eqn{R^N}.}
   \item{k}{The number of vertices of the fitted simplex. By default, the
     number of vertices is equal to the number of dimension (N) + 1.}
   \item{dump}{The output format.}
+  \item{chopless, chopmore}{Lower and upper percentile thresholds at
+    which extreme data points are assigned zero weights.}
   \item{maxiter}{"maximum number of REX steps". Default value is 60.}
   \item{...}{Named argument passed to the external 'cfit' program.}
   \item{retX}{If \code{\link[base:logical]{TRUE}}, an estimate of \code{X} is returned,
     otherwise not.}
+  \item{cfit}{Shell command to call the 'cfit' executable.}
   \item{verbose}{}
 }
 

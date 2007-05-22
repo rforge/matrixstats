@@ -26,7 +26,20 @@
 #   Please site [1] and [2] below.
 # }
 #
-# @author
+# \section{Wishlist}{
+#   The current interface from R is very ad hoc; it dumps all data to
+#   file(s), calls 'cfit' with the correct parameters via \code{pipe()}
+#   (see @see "base::connections") and parses the output files from 'cfit'.
+#   Ideally, we would link the cfit code to R via \code{.Call()} (see 
+#   @see "base::Foreign"), but that is for the future.  The current
+#   solutions has been verified to work on both Windows XP and Linux.
+# }
+#
+# \author{
+#   The algorithm and its C source code implementation is work
+#   of Pratyaksha Wirapati (now at ISREC, Lousanne).
+#   The R wrapper is work of Henrik Bengtsson (\url{http://www.braju.com/R/}).
+# }
 #
 # \references{
 #  [1] P. Wirapati, & T. Speed, \emph{Fitting polyhedrial cones and
