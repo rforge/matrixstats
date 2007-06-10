@@ -1,8 +1,8 @@
 setMethodS3("getEdges", "cfit", function(object, ...) {
   u <- list();
-  for (i in 1:(nrow(object)-1)) {
-    for (j in (i+1):nrow(object)) {
-      idx <- c(i,j);;
+  for (ii in 1:(nrow(object)-1)) {
+    for (jj in (ii+1):nrow(object)) {
+      idx <- c(ii,jj);;
       u <- c(u, list(object[idx,]));
     }
   }
@@ -26,8 +26,8 @@ setMethodS3("lines", "cfit", function(x, dim=c(1,2), ...) {
 
   u <- getEdges(object);
 
-  for (i in seq(u)) {
-    xy <- u[[i]][,dim];
+  for (ii in seq(u)) {
+    xy <- u[[ii]][,dim];
     lines(xy, ...);
   }
 }) # lines.cfit()
@@ -42,15 +42,17 @@ setMethodS3("points3d", "cfit", function(object, dim=c(1,2,3), ...) {
 setMethodS3("lines3d", "cfit", function(object, dim=c(1,2,3), ...) {
   u <- getEdges(object);
 
-  for (i in seq(u)) {
-    xyz <- u[[i]][,dim];
-    lines3d(xyz, col=cols[iter]);
+  for (ii in seq(u)) {
+    xyz <- u[[ii]][,dim];
+    lines3d(xyz, ...);
   }
 }) # lines3d.cfit()
 
 
 ###########################################################################
 # HISTORY:
+# 2007-06-10
+# o BUG FIX: lines3d() for 'cfit' queried non-existing objects.
 # 2006-05-07
 # o Created.  For now, these functions are only for internal use and
 #   for the examples.

@@ -1,6 +1,6 @@
 Package: sfit
-Version: 0.1.3
-Date: 2007-05-21
+Version: 0.1.4
+Date: 2007-06-10
 Title: Multidimensional simplex fitting
 Author: Pratyaksha Wirapati, Henrik Bengtsson
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
