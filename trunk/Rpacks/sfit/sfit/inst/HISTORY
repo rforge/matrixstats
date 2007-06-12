@@ -1,6 +1,10 @@
 Package: sfit
 =============
 
+Version: 0.1.5 [2007-06-12]
+o Added a name space to the package.
+
+
 Version: 0.1.4 [2007-06-10]
 o BUG FIX: Internal lines3d() for 'cfit' queried non-existing objects.
 o Package pass R CMD check R v2.6.0.

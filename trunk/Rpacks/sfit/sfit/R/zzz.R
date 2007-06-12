@@ -3,7 +3,8 @@
 .conflicts.OK <- TRUE
 
 
-.First.lib <- function(libname, pkgname) {
+.onAttach <- function(libname, pkgname) {
+## .First.lib <- function(libname, pkgname) {
   pkg <- Package(pkgname);
   assign(pkgname, pkg, pos=getPosition(pkg));
 
@@ -30,8 +31,11 @@
       " successfully loaded. See ?", pkgname, " for help.\n", sep="");
 }
 
+
 ###########################################################################
 # HISTORY:
+# 2007-06-12
+# o Replaced .First.lib() with .onAttach().
 # 2007-05-20
 # o WORKAROUND: Put quotation marks around default 'cfit' command.
 ###########################################################################
