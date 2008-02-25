@@ -1,6 +1,11 @@
 Package: sfit
 =============
 
+Version: 0.1.6 [2008-02-14]
+o cfit.matrix() now tests if the temporary data file was written/exists.
+o Replaced dependency on R.oo with dependency on R.methodsS3.
+
+
 Version: 0.1.5 [2007-06-12]
 o Added a name space to the package.
 

@@ -159,6 +159,26 @@ setMethodS3("cfit", "matrix", function(y, k=ncol(y)+1, dump=1, chopless=NULL, ch
   write.table(y, file=infile, sep="\t", col.names=FALSE, row.names=FALSE, quote=FALSE);
   on.exit(file.remove(infile), add=TRUE);
 
+  fi <- file.info(infile);
+  if (verbose) {
+    cat("Temporary data file written:\n");
+    print(fi);
+    bfr <- readLines(infile);
+    n <- length(bfr);
+    cat("Number of lines: ", n, "\n");
+    cat("First 5 lines of temporary data file:\n");
+    rows <- intersect(seq(length=n), 1:5);
+    print(bfr[rows]);
+    cat("Last 5 lines of temporary data file:\n");
+    rows <- intersect(seq(length=n), (n-4):n);
+    print(bfr[rows]);
+    rm(bfr, n, rows);
+  }
+
+  if (is.na(fi$size) || fi$size == 0) {
+    t <- capture.output(print(fi));
+    throw("Cannot fit simplex: Failed to write the temporary data file: ", t);
+  }
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Estimate model
@@ -175,10 +195,17 @@ setMethodS3("cfit", "matrix", function(y, k=ncol(y)+1, dump=1, chopless=NULL, ch
     cat(cmd, "\n");
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  # Parse results
+  # Launch algorithm
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  con <- pipe(cmd, open="");
+  if (verbose) {
+    cat("Pipe connection:\n");
+    str(summary(con));
+  }
+
+  # Parse results
   colClasses <- rep("double", k-1);
-  M <- read.table(pipe(cmd), colClasses=colClasses, quote="", comment.char="");
+  M <- read.table(file=con, colClasses=colClasses, quote="", comment.char="");
   M <- as.matrix(M);
 
   if (retX) {
@@ -222,6 +249,9 @@ setMethodS3("cfit", "matrix", function(y, k=ncol(y)+1, dump=1, chopless=NULL, ch
 
 ###########################################################################
 # HISTORY:
+# 2008-02-14
+# o Added more verbose output.
+# o Added some validation that the temporary data was written.
 # 2007-05-20
 # o WORKAROUND: Now the 'cfit' executable is called by its absolute 
 #   pathname. To avoid problems with spaces in the pathname, the command
