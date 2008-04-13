@@ -1,0 +1,7 @@
+The source directory for the package is in the directory of the
+same name as the package/.  All other files and directories are 
+not part of the package distribution, but related to the package, 
+e.g. in-house tests and documentation.
+
+Henrik, 2007-07-08
+
