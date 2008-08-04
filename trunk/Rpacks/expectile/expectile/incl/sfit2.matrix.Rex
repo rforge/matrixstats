@@ -18,7 +18,6 @@ y <- A %*% z + a0 + eps
 # Fit cone
 fit <- fitCone(y, M=3)
 
-layout(matrix(1:4, ncol=2, byrow=TRUE))
 lim <- c(0,1000)
 xlab <- expression(y[1])
 ylab <- expression(y[2])

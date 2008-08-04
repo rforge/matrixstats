@@ -1,4 +1,4 @@
 fitCone fitCone.data.frame 
 fitSimplex fitSimplex.data.frame
 sfit2
-
+ex1 ex2.w ex2.y

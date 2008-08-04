@@ -2,6 +2,7 @@ Package: expectile
 ==================
 
 Version: 0.2.1 [2008-08-03]
+o Added loexp(), which previously was in the 'loexp' package.
 o Updated the help page for sfit2 and a fixed a bug in its examples.
 o Package passes R CMD check on R v2.7.1 and R v2.8.0 devel.
 
