@@ -1,6 +1,6 @@
 Package: expectile
-Version: 0.2.0
-Date: 2008-04-13
+Version: 0.2.1
+Date: 2008-08-03
 Title: Multidimensional simplex fitting
 Author: Pratyaksha Wirapati, Henrik Bengtsson
 Maintainer: Henrik Bengtsson <henrikb@braju.com>

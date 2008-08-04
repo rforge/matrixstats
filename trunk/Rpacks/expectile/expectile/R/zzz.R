@@ -7,7 +7,7 @@
 .First.lib <- function(libname, pkgname) {
   library.dynam(pkgname, pkgname, libname, now=FALSE);
 
-  pkgD <- packageDescription(pkgname);
+  pkgD <- utils::packageDescription(pkgname);
   cat(pkgname, " v", pkgD$Version, " (", pkgD$Date, ")",
       " successfully loaded. See ?", pkgname, " for help.\n", sep="");
 }

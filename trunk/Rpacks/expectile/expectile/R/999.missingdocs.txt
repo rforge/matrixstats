@@ -1,0 +1,4 @@
+fitCone fitCone.data.frame 
+fitSimplex fitSimplex.data.frame
+sfit2
+

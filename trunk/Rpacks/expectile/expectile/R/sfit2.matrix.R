@@ -14,13 +14,14 @@
 # @synopsis
 #
 # \arguments{
-#   \item{y}{A PxN @matrix (or @data frame) containing P variables and 
+#   \item{y}{A PxN @matrix (or @data.frame) containing P variables and 
 #     N observations in \eqn{R^N}.}
 #   \item{M}{Number of vertices, M-1 <= P}.
 #   \item{w}{An optional @vector in [0,1] of length N specifying weight
 #     for each observation.}
 #   \item{lambda}{Vertex assigment parameters.}
 #   \item{alpha}{A @double specifying the desired expectile.}
+#   \item{family}{A @character string specifying the ....}
 #   \item{robustConst}{A @double constant multiplier of MAR scale estimate.}
 #   \item{tol}{A @double tolerance for expectile estimation.}
 #   \item{maxIter}{The maximum number of iterations in estimation step.}
@@ -30,6 +31,7 @@
 #   \item{fitCone}{If @TRUE, the first vertex is treated as an apex and
 #     the opposite face has its own residual scale estimator.}
 #   \item{verbose}{if @TRUE, iteration progress is printed to standard error.}
+#   \item{...}{Not used.}
 # }
 #
 # \value{
@@ -58,7 +60,7 @@
 #   They don't necessarily sum to one.
 # } 
 #
-# \examples{@include "..\incl\fitSimplex.Rex"}
+# \examples{@include "..\incl\sfit2.matrix.Rex"}
 #
 # \author{
 #   Pratyaksha (Asa) Wirapati, \email{wirapati@wehi.edu.au}.
@@ -133,7 +135,8 @@ setMethodS3("sfit2", "matrix", function(y, M, w=rep(1,dim(y)[2]),
     as.double(alpha), as.integer(familyCode), as.double(robustConst),
     as.integer(fitCone), as.integer(verbose),
     as.double(tol), as.integer(maxIter), as.double(Rtol),
-    X=as.double(X), Beta=double(M*N));
+    X=as.double(X), Beta=double(M*N),
+    PACKAGE="expectile");
 
   dim(fit$X) <- c(P,M);
   dim(fit$Beta) <- c(M,N);
@@ -158,25 +161,7 @@ setMethodS3("sfit2", "matrix", function(y, M, w=rep(1,dim(y)[2]),
   names(fit) <- names;
 
   fit;
-})
-
-
-setMethodS3("fitCone", "matrix", function(y, ...) {
-  sfit2(y, ..., fitcone=TRUE);
-})
-
-setMethodS3("fitCone", "data.frame", function(y, ...) {
-  fitCone(as.matrix(y), ...);
-})
-
-
-setMethodS3("fitSimplex", "matrix", function(y, ...) {
-  sfit2(y, ..., fitcone=FALSE);
-})
-
-setMethodS3("fitSimplex", "data.frame", function(y, ...) {
-  fitSimplex(as.matrix(y), ...);
-})
+}, protected=TRUE)
 
 
 ###########################################################################
