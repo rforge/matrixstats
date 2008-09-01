@@ -45,7 +45,7 @@
   (see \code{\link[base]{connections}}) and parses the output files from 'cfit'.
   Ideally, we would link the cfit code to R via \code{.Call()} (see
   \code{\link[base]{Foreign}}), but that is for the future.  The current
-  solutions has been verified to work on both Windows XP and Linux.
+  solutions has been verified to work on both Windows XP, Linux and OSX.
 }
 
 \author{

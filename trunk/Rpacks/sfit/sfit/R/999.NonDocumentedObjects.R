@@ -13,6 +13,10 @@
 # @alias "lines.cfit"
 # @alias "lines3d"
 # @alias "lines3d.cfit"
+# @alias "radials"
+# @alias "radials.cfit"
+# @alias "drawApex"
+# @alias "drawApex.cfit"
 #
 # \description{
 #   This page contains aliases for all "non-documented" objects that 

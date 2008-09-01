@@ -1,6 +1,11 @@
 Package: sfit
 =============
 
+Version: 0.1.7 [2008-08-31]
+o Added drawApex() and radials() for class cfit. 
+o Renames old HISTORY file to NEWS.
+
+
 Version: 0.1.6 [2008-02-14]
 o cfit.matrix() now tests if the temporary data file was written/exists.
 o Replaced dependency on R.oo with dependency on R.methodsS3.

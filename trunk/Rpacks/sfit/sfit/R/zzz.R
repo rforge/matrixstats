@@ -5,8 +5,7 @@
 
 .onAttach <- function(libname, pkgname) {
 ## .First.lib <- function(libname, pkgname) {
-  pkg <- Package(pkgname);
-  assign(pkgname, pkg, pos=getPosition(pkg));
+  pkg <- utils::packageDescription(pkgname);
 
   # Assert that the binaries install successfully
   if (.Platform$OS.type == "windows") {
@@ -16,7 +15,7 @@
   }
   pathname <- system.file("bin", binfile, package=pkgname);
   if (is.null(pathname)) {
-    stop("Could not locate 'bin/", binfile, "' in package '", getName(pkg), "' (v", getVersion(pkg), "). It seems like the installation of the package failed.  Please report this to ", getMaintainer(pkg), ".");
+    stop("Could not locate 'bin/", binfile, "' in package '", pkgname, "' (v", pkg$Version, "). It seems like the installation of the package failed.  Please report this to ", pkg$Maintainer, ".");
   }
 
   # cfit system command
@@ -27,7 +26,7 @@
   cmd <- sprintf("\"%s\"", pathname);
   options("cfit"=cmd);
 
-  cat(getName(pkg), " v", getVersion(pkg), " (", getDate(pkg), ")",
+  cat(pkgname, " v", pkg$Version, " (", pkg$Date, ")",
       " successfully loaded. See ?", pkgname, " for help.\n", sep="");
 }
 
