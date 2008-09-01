@@ -485,7 +485,7 @@ wquantile (
 /* added by Mark Robinson, 23rd March 2008 to interface with R */
 
 void call_loexp(int *intparams, double *dblparams, double *y, double *w, double *Ey, double *ow) {
-   int ret=0,i;
+   int ret=0;
    ret = loexp( intparams[1], y, w, intparams[2], dblparams[0], dblparams[1], dblparams[2], dblparams[3], intparams[3], Ey, ow);
    intparams[0] = ret;
 }

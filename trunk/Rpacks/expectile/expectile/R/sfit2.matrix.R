@@ -1,7 +1,7 @@
 #########################################################################/**
 # @set "class=matrix"
 # @RdocMethod sfit2
-# @alias sfit
+# @alias sfit2
 # @alias fitExpectileCone
 # @aliasmethod fitExpectileCone
 # @alias fitSimplex
@@ -25,7 +25,7 @@
 #   \item{w}{An optional @vector in [0,1] of length N specifying weight
 #     for each observation.}
 #   \item{lambda}{Vertex assigment parameters.}
-#   \item{alpha}{A @double specifying the desired expectile.}
+#   \item{alpha}{A @double in [0,1] specifying the desired expectile.}
 #   \item{family}{A @character string specifying the ....}
 #   \item{robustConst}{A @double constant multiplier of MAR scale estimate.}
 #   \item{tol}{A @double tolerance for expectile estimation.}
@@ -81,23 +81,34 @@
 # }
 #
 #*/#########################################################################
-setMethodS3("sfit2", "matrix", function(y, M=dim(y)[2]+1, w=rep(1,dim(y)[2]),
+setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
             lambda=2, alpha=0.05, 
             family=c("biweight", "huber", "normal"), robustConst=4.685,
             tol=0.001, maxIter=60, Rtol=1e-7, 
             initSimplex=NULL,
             fitCone=FALSE, verbose=FALSE, ...) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   P <- dim(y)[1];
   N <- dim(y)[2];
 
   # Argument 'M':
   if(P < M-1) {
-    stop("too many vertices for the data dimension");
+    throw("Too many vertices (P=", P, ") for the data dimension (M=", M, "): P < M-1");
   }
 
   # Argument 'lambda':
+  lambda <- as.double(lambda);
+  if (!is.finite(lambda))
+    throw("Argument 'lambda' is out of range: ", lambda);
 
   # Argument 'alpha':
+  alpha <- as.double(alpha);
+  if (length(alpha) != 1)
+    throw("Argument 'alpha' must a scalar.");
+  if (!is.finite(alpha) || alpha < 0 || alpha > 1)
+    throw("Argument 'alpha' is out of range [0,1]: ", alpha);
 
   # Argument 'w':
   if (is.null(w)) {
@@ -122,13 +133,17 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[2]+1, w=rep(1,dim(y)[2]),
   } else {
     if (!identical(dim(initSimplex), c(P,M))) {
       throw("Argument 'initSimplex' has the incorrect dimension: ", 
-            nrow(initSimplex), "x", ncol(initSimplex), " != ", P, "x", "M");
+           nrow(initSimplex), "x", ncol(initSimplex), " != ", P, "x", "M");
     }
     X <- initSimplex; 
     autoInit <- 0;
   }
 
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Fit simplex
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Encode parameters
   familyCode <- switch(family,
     normal   = 0,
     huber    = 1,
@@ -143,6 +158,10 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[2]+1, w=rep(1,dim(y)[2]),
     X=as.double(X), Beta=double(M*N),
     PACKAGE="expectile");
 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Setup return structure
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   dim(fit$X) <- c(P,M);
   dim(fit$Beta) <- c(M,N);
 

@@ -16,7 +16,7 @@ eps <- matrix(rnorm(2*n, mean=0, sd=10), nrow=2, ncol=n)
 y <- A %*% z + a0 + eps
 
 # Fit cone
-fit <- fitCone(y, M=3)
+fit <- fitCone(y)
 
 lim <- c(0,1000)
 xlab <- expression(y[1])
