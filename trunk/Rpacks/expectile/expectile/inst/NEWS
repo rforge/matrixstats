@@ -1,6 +1,12 @@
 Package: expectile
 ==================
 
+Version: 0.2.2 [2008-08-31]
+o fitCone() calls fitExpectileCone() as is.
+o Added fitExpectileCone(), which returns an ExpectileCone object.
+o Added points(), lines() and radials() to ExpectileCone.
+
+
 Version: 0.2.1 [2008-08-03]
 o Added loexp(), which previously was in the 'loexp' package.
 o Updated the help page for sfit2 and a fixed a bug in its examples.

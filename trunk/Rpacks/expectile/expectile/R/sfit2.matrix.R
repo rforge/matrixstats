@@ -1,7 +1,12 @@
 #########################################################################/**
 # @set "class=matrix"
 # @RdocMethod sfit2
+# @alias sfit
+# @alias fitExpectileCone
+# @aliasmethod fitExpectileCone
+# @alias fitSimplex
 # @aliasmethod fitSimplex
+# @alias fitCone
 # @aliasmethod fitCone
 #
 # @title "Fit a simplex or polyhedral cone to multivariate data"
@@ -16,7 +21,7 @@
 # \arguments{
 #   \item{y}{A PxN @matrix (or @data.frame) containing P variables and 
 #     N observations in \eqn{R^N}.}
-#   \item{M}{Number of vertices, M-1 <= P}.
+#   \item{M}{Number of vertices, M-1 <= P.}.
 #   \item{w}{An optional @vector in [0,1] of length N specifying weight
 #     for each observation.}
 #   \item{lambda}{Vertex assigment parameters.}
@@ -76,7 +81,7 @@
 # }
 #
 #*/#########################################################################
-setMethodS3("sfit2", "matrix", function(y, M, w=rep(1,dim(y)[2]),
+setMethodS3("sfit2", "matrix", function(y, M=dim(y)[2]+1, w=rep(1,dim(y)[2]),
             lambda=2, alpha=0.05, 
             family=c("biweight", "huber", "normal"), robustConst=4.685,
             tol=0.001, maxIter=60, Rtol=1e-7, 
@@ -85,7 +90,7 @@ setMethodS3("sfit2", "matrix", function(y, M, w=rep(1,dim(y)[2]),
   P <- dim(y)[1];
   N <- dim(y)[2];
 
-  # Argument 'M':  
+  # Argument 'M':
   if(P < M-1) {
     stop("too many vertices for the data dimension");
   }
@@ -159,6 +164,8 @@ setMethodS3("sfit2", "matrix", function(y, M, w=rep(1,dim(y)[2]),
   names[14] <- "maxIter";
   names[15] <- "Rtol";
   names(fit) <- names;
+
+  class(fit) <- "sfit2";
 
   fit;
 }, protected=TRUE)

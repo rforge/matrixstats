@@ -2,9 +2,6 @@ setMethodS3("fitSimplex", "matrix", function(y, ...) {
   sfit2(y, ..., fitcone=FALSE);
 })
 
-setMethodS3("fitSimplex", "data.frame", function(y, ...) {
-  fitSimplex(as.matrix(y), ...);
-})
 
 
 ###########################################################################

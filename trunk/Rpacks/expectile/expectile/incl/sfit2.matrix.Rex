@@ -21,10 +21,11 @@ fit <- fitCone(y, M=3)
 lim <- c(0,1000)
 xlab <- expression(y[1])
 ylab <- expression(y[2])
-plot(t(y), xlim=lim, ylim=lim, pch=".", xlab=xlab, ylab=ylab)
-X <- fit$X
-points(t(X[,1]), pch=19, cex=1.5, col="tomato") # the apex
-lines(t(lim[2]*(X[,c(3,1,2)]-X[,1])+X[,1]), lwd=2, col="tomato")
+plot(t(y), pch=".", xlim=lim, ylim=lim, xlab=xlab, ylab=ylab)
+points(fit, pch=19, cex=1.5, col="#aaaaaa")
+radials(fit, col="#aaaaaa", lwd=2)
+drawApex(fit, pch=19, cex=1, col="tomato")
+lines(fit, col="tomato", lwd=2)
 
 
 # The rectified data points
