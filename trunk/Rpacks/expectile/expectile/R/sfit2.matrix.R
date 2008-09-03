@@ -100,6 +100,8 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
 
   # Argument 'lambda':
   lambda <- as.double(lambda);
+  if (length(lambda) != 1)
+    throw("Argument 'lambda' must a scalar.");
   if (!is.finite(lambda))
     throw("Argument 'lambda' is out of range: ", lambda);
 
