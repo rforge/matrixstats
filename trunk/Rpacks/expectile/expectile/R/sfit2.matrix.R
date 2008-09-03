@@ -12,8 +12,11 @@
 # @title "Fit a simplex or polyhedral cone to multivariate data"
 #
 # \description{
-#   @get "title" by decomposing data @matrix
-#   \eqn{Y = X B + E}, where \eqn{B} is "mostly non-negative".
+#   @get "title" by decomposing data PxN @matrix
+#   \eqn{Y = X B + E}, where 
+#   \eqn{X} is a PxM @matrix, 
+#   \eqn{B} is a "mostly non-negative" MxN @matrix, and
+#   \eqn{E} is a PxN @matrix of noise, all with \eqn{M-1 \leq P}.
 # }
 #
 # @synopsis
@@ -28,11 +31,12 @@
 #   \item{alpha}{A @double in [0,1] specifying the desired expectile.}
 #   \item{family}{A @character string specifying the ....}
 #   \item{robustConst}{A @double constant multiplier of MAR scale estimate.}
-#   \item{tol}{A @double tolerance for expectile estimation.}
+#   \item{tol}{A positive @double tolerance for expectile estimation.}
 #   \item{maxIter}{The maximum number of iterations in estimation step.}
-#   \item{Rtol}{A @double tolerance in linear solve, 
+#   \item{Rtol}{A postive @double tolerance in linear solve, 
 #      before a vertex is ignored.} 
-#   \item{initSimplex}{A user-supplied initial simplex, otherwise automatic.}
+#   \item{initSimplex}{A user-supplied initial simplex PxM @matrix ('X').
+#      If @NULL, the initial simplex is estimated automatically.}
 #   \item{fitCone}{If @TRUE, the first vertex is treated as an apex and
 #     the opposite face has its own residual scale estimator.}
 #   \item{verbose}{if @TRUE, iteration progress is printed to standard error.}
@@ -133,9 +137,10 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
     X <- matrix(0.0, nrow=P, ncol=M);
     autoInit <- 1;
   } else {
-    if (!identical(dim(initSimplex), c(P,M))) {
+    if (!all.equal(dim(initSimplex), c(P,M))) {
       throw("Argument 'initSimplex' has the incorrect dimension: ", 
-           nrow(initSimplex), "x", ncol(initSimplex), " != ", P, "x", "M");
+            nrow(initSimplex), "x", ncol(initSimplex), 
+            " != ", P, "x", "M, where M=", M);
     }
     X <- initSimplex; 
     autoInit <- 0;
@@ -194,6 +199,9 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
 
 ###########################################################################
 # HISTORY:
+# 2008-09-03
+# o Updated the validation of 'initMatrix'.
+# o Added validation for 'lambda'.
 # 2008-04-12
 # o Added fitCone() and fitSimplex(), which are simply wrappers to sfit().
 ###########################################################################
