@@ -660,7 +660,7 @@ sfit (
       fprintf(stderr,"iter: %3d, |Delta X|_F/|X|_F = %g\n", r, sqrt(DX_F/X_F));
 
     if( DX_F/X_F < tolerance*tolerance ) break;
-    }
+    } // for (int r = 0, ...)
 
   if(Beta)
     {

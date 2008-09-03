@@ -24,7 +24,7 @@
 #   \item{M}{Number of vertices, M-1 <= P.}.
 #   \item{w}{An optional @vector in [0,1] of length N specifying weight
 #     for each observation.}
-#   \item{lambda}{Vertex assigment parameters.}
+#   \item{lambda}{A scalar vertex assigment parameter in [1,Inf).}
 #   \item{alpha}{A @double in [0,1] specifying the desired expectile.}
 #   \item{family}{A @character string specifying the ....}
 #   \item{robustConst}{A @double constant multiplier of MAR scale estimate.}
