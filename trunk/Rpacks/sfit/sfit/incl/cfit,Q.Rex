@@ -1,6 +1,7 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Simulate data
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+set.seed(0xbeef)
 N <- 1000
 
 # Simulate genotypes
@@ -39,23 +40,32 @@ legend("topright", pch=19, pt.cex=2, legend=c("X", "Z", "Y"), col=c("black", "bl
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # Fit model
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-alpha <- c(0.10, 0.075, 0.05, 0.03, 0.01, 0.001)
-fit <- cfit(Y, dump=2, alpha=alpha, q=2, Q=98)
-Ms <- fit$M
-col <- terrain.colors(length(Ms))
-col[length(Ms)] <- "red"
-
 plot(Y, cex=0.8, xlab=xlab, ylab=ylab, xlim=lim, ylim=lim, main="Y")
 
-for (kk in seq(along=Ms)) {
-  M <- Ms[[kk]]
+Qs <- 100-c(0,1,2,5,10,25)
+qs <- rep(2, length(Qs))
+col <- terrain.colors(length(qs))
+fits <- list()
+for (kk in seq(along=qs)) {
+  q <- qs[kk]
+  Q <- Qs[kk]
+  fit <- cfit(Y, q=q, Q=Q)
+  fits[[kk]] <- fit
+
+  M <- fit$M
   points(M, pch=19, cex=2.5, col=col[kk])
   lines(M, col=col[kk], lwd=2)
   text(M, cex=0.8, labels=kk)
 }
 
-legend("topright", pch=19, pt.cex=2, legend=c(alpha, "final"), col=col, title=expression(alpha), bg="#eeeeee")
+legend("topright", pch=19, pt.cex=2, legend=sprintf("(%d,%d)", qs, Qs), col=col, title="(q,Q):", bg="#eeeeee")
 
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Backtransform
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+M <- fits[[1]]$M
 apex <- which.min(apply(M, MARGIN=1, FUN=function(u) sum(u^2)))
 a0hat <- M[apex,]
 Ahat <- M[-apex,]
@@ -65,6 +75,9 @@ if (sum(Ahat[c(1,4)]^2) < sum(Ahat[c(2,3)]^2)) {
 }
 Ainv <- solve(Ahat)
 Xhat <- t(Ainv %*% (t(Y) - a0hat))
+
+cat("Estimated apex:\n")
+print(a0hat);
 
 cat("True A:\n")
 print(A)
@@ -79,6 +92,34 @@ lines(x=c(0,x1), y=c(0,0), col="red", lwd=2)
 lines(x=c(0,0), y=c(0,y1), col="red", lwd=2)
 lines(x=c(0,x1), y=c(0,y1), col="blue", lwd=2)
 
-plot(X[,1], Xhat[,1], cex=0.8, xlab=expression(X), ylab=expression(hat(X)), xlim=lim, ylim=lim)
-points(X[,2], Xhat[,2], cex=0.8, col="red")
-abline(a=0, b=1, lwd=2)
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Backtransform
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+M <- fits[[length(fits)]]$M
+apex <- which.min(apply(M, MARGIN=1, FUN=function(u) sum(u^2)))
+a0hat <- M[apex,]
+Ahat <- M[-apex,]
+Ahat <- apply(Ahat, MARGIN=2, FUN=function(u) u / sqrt(sum(u^2)))
+if (sum(Ahat[c(1,4)]^2) < sum(Ahat[c(2,3)]^2)) {
+  Ahat <- matrix(Ahat[c(2,1,4,3)], nrow=2)
+}
+Ainv <- solve(Ahat)
+Xhat <- t(Ainv %*% (t(Y) - a0hat))
+
+cat("Estimated apex:\n")
+print(a0hat);
+
+cat("True A:\n")
+print(A)
+
+cat("Estimated A:\n")
+print(Ahat)
+
+plot(Xhat, cex=0.8, xlab=xlab, ylab=ylab, xlim=lim, ylim=lim, main=expression(hat(X)))
+x1 <- par("usr")[2]
+y1 <- par("usr")[4]
+lines(x=c(0,x1), y=c(0,0), col="red", lwd=2)
+lines(x=c(0,0), y=c(0,y1), col="red", lwd=2)
+lines(x=c(0,x1), y=c(0,y1), col="blue", lwd=2)
