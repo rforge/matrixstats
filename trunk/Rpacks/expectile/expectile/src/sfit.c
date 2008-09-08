@@ -368,11 +368,9 @@ initial_simplex (
 }
 
 
-//
-//
 
 int
-sfit (
+sfit0 (
   int n,                // data length
   int p,                // data dimensions
   const double *Y,      // data matrix, n x p
@@ -380,6 +378,8 @@ sfit (
   int m,                // simplex order
   int autoinit,         // 1: call initial_simplex, 0: use caller's X
   double *X,            // initial simplex (overwritten by the final), m x p
+  double *wX0,          // prior weights
+  double *X0,           // prior simplex/cone (depending on autoinit)
   double *Beta,         // affine combination coefficients, n x m
 
   double lambda,        // vertex assigment parameter
@@ -399,6 +399,28 @@ sfit (
   )
 {
   if( m == 0 || n == 0 || p == 0 ) return 0;
+
+  int prior_simplex = 0;
+  if( wX0 && X0 )
+    {
+    double sum_wX0 = 0;
+    for(int i = 0; i < m; i++ )
+      {
+      if( wX0[i] < 0 ) wX0[i] = 0;
+      sum_wX0 += wX0[i];
+      }
+    if( sum_wX0 > 0 )
+      {
+      prior_simplex = 1;
+      if( fitcone == 1 ) // add the apex coordinate to the others
+        {
+        double *X0i = X0+p;
+        for(int i = 1; i < m; i++, X0i += p )
+          for(int j = 0; j < p; j++ )
+            X0i[j] += X0[j];
+        }
+      }
+    }
 
   if(M_family > 0 && gamma < 0)
     gamma = (M_family == 1 ? 1.345 : 4.685 );
@@ -647,6 +669,26 @@ sfit (
           Xci[h] += D[i*m+k] * Xk[h];
       }
 
+    if( prior_simplex )
+      {
+      Xci = Xc;
+      double *X0i = X0;
+      for(int i = 0; i < m; i++, Xci += p, X0i += p )
+        {
+        if( wX0[i] > 0 )
+          {
+          if( wX0[i] <= DBL_MAX ) // finite weight
+            for(int h = 0; h < p; h++ )
+              {
+              Xci[h] = (Xci[h] + wX0[i]*X0i[h])/(1.0+wX0[i]);
+              }
+          else
+            for(int h = 0; h < p; h++ )
+              Xci[h] = X0i[h];
+           }
+        }
+      }
+
     // copy Xc to X, and compute the norm of the difference
     double DX_F = 0, X_F = 0;
     for(int i = 0; i < m*p; i++ )
@@ -699,6 +741,43 @@ sfit (
   return 0;
 }
 
+// sfit() - older version of interface, without prior simplex (equivalent
+// to sfit0() with prior simplex having all zero weights).
+//
+
+int
+sfit (
+  int n,                // data length
+  int p,                // data dimensions
+  const double *Y,      // data matrix, n x p
+  const double *w,      // observation weight, n
+  int m,                // simplex order
+  int autoinit,         // 1: call initial_simplex, 0: use caller's X
+  double *X,            // initial simplex (overwritten by the final), m x p
+  double *Beta,         // affine combination coefficients, n x m
+
+  double lambda,        // vertex assigment parameter
+  double alpha,         // asymmetry weight
+  int M_family,   // 0: least-squares, 1: Huber, 2: Biweight
+  double gamma,         // robustness scale factor
+                        // if < 0, use 1.345 for Huber and 4.685 for biweight
+  int fitcone,          // if 1, treat first vertex as the apex (use separate
+                        // robust scale estimate for the opposite facet).
+                        // Otherwise, treat as simplex and pool scale est.
+  
+  int verbose,          // dump iteration steps to stderr
+  double tolerance,     // convergence tolerance, ||\Delta X||F/||X||_F
+  int iter_max,         // maximum iterations
+  double Rtolerance     // smallest acceptable abs value of the diagonal entry
+                        // of R still used for solving. 
+  )
+{
+  double *X0 = NULL, *wX0 = NULL;
+
+  return sfit0( n, p, Y, w, m, autoinit,
+    X, wX0, X0, Beta, lambda, alpha, M_family, gamma,
+    fitcone,verbose,tolerance, iter_max, Rtolerance);
+}
 // wrapper for indirection for calling from R
 void
 Rwrapper_sfit (
@@ -721,12 +800,40 @@ Rwrapper_sfit (
     double *Beta        // output
     )
 {
-  sfit(*n,*p, Y, w, *m, *autoinit, X, Beta,
+  sfit0(*n,*p, Y, w, *m, *autoinit, X, NULL, NULL, Beta,
       *lambda, *alpha, *M_family, *gamma, *fitcone,
       *verbose, *tolerance,
       *iter_max, *Rtolerance );
 }
 
+void
+Rwrapper_sfit0 (
+    int *n,
+    int *p,
+    double *Y,
+    double *w,
+    int *m,
+    int *autoinit,
+    double *lambda,
+    double *alpha,
+    int *M_family,
+    double *gamma,
+    int *fitcone,
+    int *verbose,
+    double *tolerance,
+    int *iter_max,
+    double *Rtolerance,
+    double *X,          // output
+    double *Beta,        // output
+    double *wX0,
+    double *X0
+    )
+{
+  sfit0(*n,*p, Y, w, *m, *autoinit, X, wX0, X0, Beta,
+      *lambda, *alpha, *M_family, *gamma, *fitcone,
+      *verbose, *tolerance,
+      *iter_max, *Rtolerance );
+}
 #if CLI
 
 #include <stdio.h>
