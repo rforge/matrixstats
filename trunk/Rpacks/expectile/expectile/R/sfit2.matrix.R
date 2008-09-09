@@ -35,7 +35,11 @@
 #   \item{maxIter}{The maximum number of iterations in estimation step.}
 #   \item{Rtol}{A postive @double tolerance in linear solve, 
 #      before a vertex is ignored.} 
-#   \item{initSimplex}{A user-supplied initial simplex PxM @matrix ('X').
+#   \item{priorX, priorW}{(Optional) Prior simplex PxM @matrix and 
+#      M vertex weights.  An @Inf weight corresponds to a fixed vertex.
+#      If @NULL, no priors are used.
+#   }
+#   \item{initX}{(Optional) An initial simplex PxM @matrix ('X').
 #      If @NULL, the initial simplex is estimated automatically.}
 #   \item{fitCone}{If @TRUE, the first vertex is treated as an apex and
 #     the opposite face has its own residual scale estimator.}
@@ -69,10 +73,11 @@
 #   They don't necessarily sum to one.
 # } 
 #
-# \examples{@include "..\incl\sfit2.matrix.Rex"}
+# \examples{@include "..\incl\fitCone.matrix.Rex"}
 #
 # \author{
-#   Pratyaksha (Asa) Wirapati, \email{wirapati@wehi.edu.au}.
+#   Algorithm and native code by Pratyaksha (Asa) Wirapati.
+#   R interface by Henrik Bengtsson.
 # }
 #
 # \references{
@@ -89,18 +94,25 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
             lambda=2, alpha=0.05, 
             family=c("biweight", "huber", "normal"), robustConst=4.685,
             tol=0.001, maxIter=60, Rtol=1e-7, 
-            initSimplex=NULL,
+            priorX=NULL, priorW=NULL,
+            initX=NULL,
             fitCone=FALSE, verbose=FALSE, ...) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  P <- dim(y)[1];
-  N <- dim(y)[2];
+  dimY <- dim(y);
+  P <- dimY[1];
+  N <- dimY[2];
+
+  # Argument 'y':
+  y <- as.double(y);
+  dim(y) <- dimY;
 
   # Argument 'M':
   if(P < M-1) {
     throw("Too many vertices (P=", P, ") for the data dimension (M=", M, "): P < M-1");
   }
+  dimX <- c(P,M);
 
   # Argument 'lambda':
   lambda <- as.double(lambda);
@@ -132,18 +144,46 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
   # Argument 'family':
   family <- match.arg(family);
 
-  # Argument 'initSimplex':
-  if(is.null(initSimplex)) {
+  # Argument 'initX':
+  if (is.null(initX)) {
     X <- matrix(0.0, nrow=P, ncol=M);
     autoInit <- 1;
   } else {
-    if (!all.equal(dim(initSimplex), c(P,M))) {
-      throw("Argument 'initSimplex' has the incorrect dimension: ", 
-            nrow(initSimplex), "x", ncol(initSimplex), 
+    if (!all.equal(dim(initX), dimX)) {
+      throw("Argument 'initX' has the incorrect dimension: ", 
+            nrow(initX), "x", ncol(initX), 
             " != ", P, "x", "M, where M=", M);
     }
-    X <- initSimplex; 
+    X <- as.double(initX); 
     autoInit <- 0;
+  }
+
+  # Argument 'priorX':
+  if (!is.null(priorX)) {
+    if (!all.equal(dim(priorX), dimX)) {
+      throw("Argument 'priorX' has the incorrect dimension: ", 
+            nrow(priorX), "x", ncol(priorX), 
+            " != ", P, "x", "M, where M=", M);
+    }
+    X0 <- as.double(priorX);
+  } else {
+    X0 <- NULL;
+  }
+
+  # Argument 'priorW':
+  if (!is.null(priorW)) {
+    if (length(priorW) != M) {
+      throw("The length of argument 'priorW' does not match the number of vertices: ", length(priorW), " != ", M); 
+    }
+    wX0 <- as.double(priorW);
+    if (any(is.na(wX0)))
+      throw("Argument 'priorW' contains missing values.");
+    if (any(wX0 < 0))
+      throw("Argument 'priorW' contains negative weights.");
+    # Workaround for +Inf;
+    wX0[is.infinite(wX0)] <- .Machine$double.xmax;
+  } else {
+    wX0 <- NULL;
   }
 
 
@@ -157,20 +197,25 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
     biweight = 2
   );
 
-  fit <- .C("Rwrapper_sfit", as.integer(N), as.integer(P), as.double(y),
+  fit <- .C("Rwrapper_sfit0", as.integer(N), as.integer(P), as.double(y),
     as.double(w), as.integer(M), as.integer(autoInit), as.double(lambda),
     as.double(alpha), as.integer(familyCode), as.double(robustConst),
     as.integer(fitCone), as.integer(verbose),
     as.double(tol), as.integer(maxIter), as.double(Rtol),
-    X=as.double(X), Beta=double(M*N),
+    X=X, Beta=double(M*N),
+    wX0=wX0, X0=X0,
     PACKAGE="expectile");
 
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Setup return structure
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  dim(fit$X) <- c(P,M);
+  dim(fit$X) <- dimX;
   dim(fit$Beta) <- c(M,N);
+  if (!is.null(fit$X0))
+    dim(fit$X0) <- dimX;
+  if (!is.null(fit$wX0))
+    dim(fit$wX0) <- M;
 
   # Update the names
   names <- names(fit);
@@ -199,6 +244,9 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
 
 ###########################################################################
 # HISTORY:
+# 2008-09-08
+# o Added R support for fitting with prior simplex.  Added example code.
+# o WP updated native sfit to accept prior simplex with weights.
 # 2008-09-03
 # o Updated the validation of 'initMatrix'.
 # o Added validation for 'lambda'.

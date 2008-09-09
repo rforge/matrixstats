@@ -1,6 +1,11 @@
 Package: expectile
 ==================
 
+Version: 0.2.3 [2008-09-08]
+o Updated the internal native sfit algorithm to fit the
+  simplex/cone with a weighted prior simplex/cone.
+
+
 Version: 0.2.2 [2008-08-31]
 o fitCone() calls fitExpectileCone() as is.
 o Added fitExpectileCone(), which returns an ExpectileCone object.
