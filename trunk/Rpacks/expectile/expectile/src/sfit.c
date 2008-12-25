@@ -26,6 +26,19 @@ w_biweight ( double absres, double par )
   return u;
 }
 
+static inline void
+update_moment3 ( int n, double M1, double M2, double M3, double x,
+  int *n_, double *M1_, double *M2_, double *M3_ )
+{
+  if(!isfinite(x)) return;
+  *n_ = ++n;
+  double d = (x-M1)/n;
+  *M1_ = M1 + d;
+  *M2_ = M2 + n*(n-1)*d*d;
+  *M3_ = M3 + n*(n-1)*(n-2)*d*d*d - 3*M2*d;
+}
+
+#if 0
 // NOTE: the sd is MLE, not unbiased (REML), which requires sww.
 static void
 moment3stat ( double sw, double sx, double sxx, double sxxx,
@@ -39,6 +52,7 @@ moment3stat ( double sw, double sx, double sxx, double sxxx,
   if(sd_) *sd_ = sd;
   if(skewness_) *skewness_ = skewness;
 }
+#endif
 
 // XXX calling wquantile(0,...) results in access to x[-1]
 
@@ -333,19 +347,17 @@ initial_simplex (
     double *xi = X + i*p;
     for(int k = 0; k < p; k++ )
       Z[k] = mu[k]-xi[k];
-    double sx = 0, sxx = 0, sxxx = 0;
+    int N = 0; double M1 = 0, M2 = 0, M3 = 0;
     Yj = Y;
     for(int j = 0; j < n; j++, Yj += p )
       {
       double dot = 0;
       for(int k = 0; k < p; k++ )
         dot += Yj[k]*Z[k];
-      sx += dot;
-      sxx += dot*dot;
-      sxxx += dot*dot*dot;
+      update_moment3 ( N, M1, M2, M3, dot, &N, &M1, &M2, &M3 );
       }
-    double skewness;
-    moment3stat ( n, sx, sxx, sxxx, 0, 0, &skewness );
+    M2 /= N-1;
+    double skewness = M3/N / sqrt(M2*M2*M2);
     if( skewness > maxskew )
       { maxskew = skewness; imaxskew = i; }
     }
