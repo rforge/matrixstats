@@ -30,11 +30,9 @@
 #
 # \value{
 #   Returns a named @list structure elements:
-#   \itemize{
 #    \item{\code{M}}{IxN @matrix where each rows is the coordinate for
 #      one of the vertices.}
 #    \item{\code{X}}{(optional) the IxN @matrix \eqn{X}.}
-#   }
 # }
 #
 # \details{

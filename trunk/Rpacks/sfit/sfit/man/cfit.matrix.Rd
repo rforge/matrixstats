@@ -40,11 +40,9 @@
 
 \value{
   Returns a named \code{\link[base]{list}} structure elements:
-  \itemize{
    \item{\code{M}}{IxN \code{\link[base]{matrix}} where each rows is the coordinate for
      one of the vertices.}
    \item{\code{X}}{(optional) the IxN \code{\link[base]{matrix}} \eqn{X}.}
-  }
 }
 
 \details{
@@ -87,9 +85,10 @@ eps <- matrix(rnorm(2*N, mean=0, sd=0.05), ncol=2)
 Y <- Z + eps
 
 layout(matrix(1:4, ncol=2, byrow=TRUE))
+par(mar=c(5,4,3,2)+0.1)
 xlab <- "Allele A"
 ylab <- "Allele B"
-lim <- c(0,6)
+lim <- c(-0.5,8)
 plot(X, xlab=xlab, ylab=ylab, xlim=lim, ylim=lim)
 points(Z, col="blue")
 points(Y, col="red")
@@ -104,10 +103,8 @@ alpha <- c(0.10, 0.075, 0.05, 0.03, 0.01, 0.001)
 fit <- cfit(Y, dump=2, alpha=alpha, q=2, Q=98)
 Ms <- fit$M
 col <- terrain.colors(length(Ms))
-#col <- rainbow(length(Ms))
 col[length(Ms)] <- "red"
 
-lim <- c(-0.5,5)
 plot(Y, cex=0.8, xlab=xlab, ylab=ylab, xlim=lim, ylim=lim, main="Y")
 
 for (kk in seq(along=Ms)) {
