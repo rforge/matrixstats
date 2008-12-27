@@ -49,10 +49,8 @@
 #
 # \value{
 #   Returns a named @list structure elements:
-#   \itemize{
-#     \item{X}{the fitted simplex, as a PxM @matrix.}
-#     \item{B}{Affine coefficients, as an MxN @matrix.}
-#   }
+#   \item{X}{the fitted simplex, as a PxM @matrix.}
+#   \item{B}{Affine coefficients, as an MxN @matrix.}
 # }
 #
 # \details{

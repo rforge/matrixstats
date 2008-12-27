@@ -68,10 +68,8 @@
 
  \value{
    Returns a named \code{\link[base]{list}} structure elements:
-   \itemize{
-     \item{X}{the fitted simplex, as a PxM \code{\link[base]{matrix}}.}
-     \item{B}{Affine coefficients, as an MxN \code{\link[base]{matrix}}.}
-   }
+   \item{X}{the fitted simplex, as a PxM \code{\link[base]{matrix}}.}
+   \item{B}{Affine coefficients, as an MxN \code{\link[base]{matrix}}.}
  }
 
  \details{
