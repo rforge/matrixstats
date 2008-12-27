@@ -27,8 +27,8 @@ w_biweight ( double absres, double par )
 }
 
 static inline void
-update_moment3 ( int n, double M1, double M2, double M3, double x,
-  int *n_, double *M1_, double *M2_, double *M3_ )
+update_moment3 ( double n, double M1, double M2, double M3, double x,
+  double *n_, double *M1_, double *M2_, double *M3_ )
 {
   if(!isfinite(x)) return;
   *n_ = ++n;
@@ -38,21 +38,6 @@ update_moment3 ( int n, double M1, double M2, double M3, double x,
   *M3_ = M3 + n*(n-1)*(n-2)*d*d*d - 3*M2*d;
 }
 
-#if 0
-// NOTE: the sd is MLE, not unbiased (REML), which requires sww.
-static void
-moment3stat ( double sw, double sx, double sxx, double sxxx,
-    double *mean_, double *sd_, double *skewness_ )
-{
-  double mean = sx/sw;
-  double sd = sqrt((sxx-mean*mean*sw)/sw);
-  double skewness = ((sxxx-3*sxx*mean+3*sx*mean*mean-mean*mean*mean*sw)/sw)
-                    /(sd*sd*sd);
-  if(mean_) *mean_ = mean;
-  if(sd_) *sd_ = sd;
-  if(skewness_) *skewness_ = skewness;
-}
-#endif
 
 // XXX calling wquantile(0,...) results in access to x[-1]
 
@@ -347,7 +332,7 @@ initial_simplex (
     double *xi = X + i*p;
     for(int k = 0; k < p; k++ )
       Z[k] = mu[k]-xi[k];
-    int N = 0; double M1 = 0, M2 = 0, M3 = 0;
+    double N = 0, M1 = 0, M2 = 0, M3 = 0;
     Yj = Y;
     for(int j = 0; j < n; j++, Yj += p )
       {
