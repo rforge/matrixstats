@@ -1,6 +1,10 @@
 Package: expectile
 ==================
 
+Version: 0.2.5 [2009-06-12]
+o Made loexp() internal for now.
+
+
 Version: 0.2.4 [2008-12-26]
 o BUG FIX: Single-pass skewness calculation was incorrect. This
   could be the cause for poor convergence with some data sets.

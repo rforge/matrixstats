@@ -42,6 +42,7 @@
 #
 # @examples "../incl/loexp.Rex"
 #
+# @keyword internal
 #*/#########################################################################
 loexp <- function(y, w=rep(1,length(y)), sigma=40, polyo=2, alpha=0.5, biweight=4.685, tol=0.0001, maxIter=50) {
   T <- length(y);
@@ -67,9 +68,8 @@ loexp <- function(y, w=rep(1,length(y)), sigma=40, polyo=2, alpha=0.5, biweight=
 
 ###########################################################################
 # HISTORY:
+# 2009-06-12
+# o Made loexp() internal.
 # 2008-03-24
 # o Created by Mark Robinson (mrobinson@wehi.edu.au).
 ###########################################################################
-
-
-
