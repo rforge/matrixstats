@@ -1,6 +1,10 @@
 Package: expectile
 ==================
 
+Version: 0.2.6 [2012-03-23]
+o Now package uses packageStartupMessage() instead of cat() when loaded.
+
+
 Version: 0.2.5 [2009-06-12]
 o Made loexp() internal for now.
 

@@ -8,13 +8,15 @@
   library.dynam(pkgname, pkgname, libname, now=FALSE);
 
   pkgD <- utils::packageDescription(pkgname);
-  cat(pkgname, " v", pkgD$Version, " (", pkgD$Date, ")",
+  packageStartupMessage(pkgname, " v", pkgD$Version, " (", pkgD$Date, ")",
       " successfully loaded. See ?", pkgname, " for help.\n", sep="");
 }
 
 
 ###########################################################################
 # HISTORY:
+# 2012-03-23
+# o Now .onAttach() uses packageStartupMessage() instead of cat().
 # 2008-04-12
 # o Now we're finally are using a dynamically loaded library; no more
 #   calling external binaries.
