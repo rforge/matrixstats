@@ -3,8 +3,8 @@
 .conflicts.OK <- TRUE
 
 
-#.onAttach <- function(libname, pkgname) {
-.First.lib <- function(libname, pkgname) {
+.onAttach <- function(libname, pkgname) {
+#.First.lib <- function(libname, pkgname) {
   library.dynam(pkgname, pkgname, libname, now=FALSE);
 
   pkgD <- utils::packageDescription(pkgname);
@@ -15,6 +15,8 @@
 
 ###########################################################################
 # HISTORY:
+# 2012-06-22
+# o Now using .onAttach() instead of .First.lib().
 # 2012-03-23
 # o Now .onAttach() uses packageStartupMessage() instead of cat().
 # 2008-04-12

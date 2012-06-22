@@ -1,6 +1,16 @@
 Package: expectile
 ==================
 
+Version: 0.3.0 [2012-06-22]
+o Now using .onAttach() instead of .First.lib().
+o Now sfit2() passes NA instead of NULL to .C("Rwrapper_sfit0").
+o BUG FIX: The previous workaround for using prior +Inf weights and
+  pass them to the native code as .Machine$double.xmax did no longer
+  work; it resulted in missing values in the results.  Passing
+  Inf as sqrt(.Machine$double.xmax) seems to work.
+o Package passes R CMD check on R v2.15.0 and R devel.
+
+
 Version: 0.2.6 [2012-03-23]
 o Now package uses packageStartupMessage() instead of cat() when loaded.
 

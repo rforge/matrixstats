@@ -826,6 +826,9 @@ Rwrapper_sfit0 (
     double *X0
     )
 {
+  if (wX0 && !isfinite(wX0[0])) wX0 = NULL;
+  if (X0 && isnan(X0[0])) X0 = NULL;
+
   sfit0(*n,*p, Y, w, *m, *autoinit, X, wX0, X0, Beta,
       *lambda, *alpha, *M_family, *gamma, *fitcone,
       *verbose, *tolerance,

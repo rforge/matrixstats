@@ -165,7 +165,7 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
     }
     X0 <- as.double(priorX);
   } else {
-    X0 <- NULL;
+    X0 <- NaN;
   }
 
   # Argument 'priorW':
@@ -179,9 +179,9 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
     if (any(wX0 < 0))
       throw("Argument 'priorW' contains negative weights.");
     # Workaround for +Inf;
-    wX0[is.infinite(wX0)] <- .Machine$double.xmax;
+    wX0[is.infinite(wX0)] <- sqrt(.Machine$double.xmax);
   } else {
-    wX0 <- NULL;
+    wX0 <- NaN;
   }
 
 
@@ -202,8 +202,11 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
     as.double(tol), as.integer(maxIter), as.double(Rtol),
     X=X, Beta=double(M*N),
     wX0=wX0, X0=X0,
-    PACKAGE="expectile");
+    NAOK=TRUE, PACKAGE="expectile");
 
+  # Workaround for .C() no longer accepting NULLs.
+  if (identical(X0, NaN)) fit$X0 <- NULL;
+  if (identical(wX0, NaN)) fit$wX0 <- NULL;
 
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   # Setup return structure
@@ -242,6 +245,12 @@ setMethodS3("sfit2", "matrix", function(y, M=dim(y)[1]+1, w=rep(1,dim(y)[2]),
 
 ###########################################################################
 # HISTORY:
+# 2012-06-22
+# o BUG FIX: The previous workaround for using prior +Inf weights and
+#   pass them to the native code as .Machine$double.xmax did no longer
+#   work; it resulted in missing values in the results.  Passing
+#   Inf as sqrt(.Machine$double.xmax) seems to work.
+# o Now sfit2() passes NA instead of NULL to .C("Rwrapper_sfit0").
 # 2008-09-08
 # o Added R support for fitting with prior simplex.  Added example code.
 # o WP updated native sfit to accept prior simplex with weights.

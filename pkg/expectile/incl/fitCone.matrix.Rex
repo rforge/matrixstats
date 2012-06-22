@@ -26,6 +26,7 @@ for (withPrior in c(FALSE, TRUE)) {
   if (withPrior) {
     priorX <- matrix(c(a0, 0,0, 0,0), nrow=2, ncol=3)
     priorW <- c(Inf,0,0)
+    priorW <- c(+100,0,0)
     # Fit cone
     fit <- fitCone(y, priorX=priorX, priorW=priorW)
     stopifnot(identical(fit$X[,1], a0))
